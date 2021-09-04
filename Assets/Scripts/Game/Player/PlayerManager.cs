@@ -70,6 +70,13 @@ namespace Game.Player
             
             _saveManager.SavePlayer(_data);
         }
+
+        public int GetCurrencyValue(Currency type)
+        {
+            var currentWallet = _data.PlayerWallet.FirstOrDefault(x => x.Currency == type);
+            DebugOnly.Check(currentWallet != null, $"Player dont have wallet for {type}");
+            return currentWallet.Value;
+        }
     }
 }
 

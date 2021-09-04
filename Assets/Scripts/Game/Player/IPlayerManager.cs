@@ -10,6 +10,7 @@ namespace Game.Player
         int AddNewBuilding(DateTime builtDate, DateTime produceCompleteDate, int level);
         void UpgradeBuilding(int id, int level, DateTime produceCompleteDate);
         void AddCurrency(CurrencyAmount amount);
+        int GetCurrencyValue(Currency type);
     }
 }
 
