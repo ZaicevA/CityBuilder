@@ -8,7 +8,7 @@ namespace Game.Data
     [CreateAssetMenu(fileName = "PlayerData", menuName = "Data/PlayerData")]
     public class PlayerData : ScriptableObject
     {
-        public CurrencyAmount[] PlayersWallet;
+        public CurrencyAmount[] PlayerWallet;
         public List<BuiltHouseData> BuiltHouses;
     }
 
@@ -18,5 +18,6 @@ namespace Game.Data
         public DateTime CollectDate;
         public DateTime ProduceCompleteDate;
         public int HouseLevel;
+        public int Id;
     }
 }
