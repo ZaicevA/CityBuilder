@@ -1,0 +1,5 @@
+# CityBuilder
+
+Project architecture
+
+https://miro.com/welcomeonboard/MFYxczNlTjdSSUJPVEdOb0FIRjgxQkl1bnRuV05Cd1ZkRktKMGYyMUkzbDVRMmxKQVlTT0hxajhaZEM5RWlHUHwzMDc0NDU3MzUwNDA5ODk5MzEw
