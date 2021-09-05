@@ -14,10 +14,16 @@ namespace Game.Data
 
     public struct BuiltHouseData
     {
+        public HouseData Data;
+        public Timings Timings;
+        public int HouseLevel;
+        public int Id;
+    }
+
+    public struct Timings
+    {
         public DateTime BuiltDate;
         public DateTime CollectDate;
         public DateTime ProduceCompleteDate;
-        public int HouseLevel;
-        public int Id;
     }
 }

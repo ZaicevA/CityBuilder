@@ -28,15 +28,14 @@ namespace Game.Player
             _data.BuiltHouses = new List<BuiltHouseData>();
         }
 
-        public int AddNewBuilding(DateTime builtDate, DateTime produceCompleteDate, int level)
+        public int AddNewBuilding(Timings timings, int level, HouseData data)
         {
             var id = _data.BuiltHouses.Count;
             var houseData = new BuiltHouseData()
             {
-                BuiltDate = builtDate,
-                CollectDate = builtDate,
+                Data = data,
                 HouseLevel = level,
-                ProduceCompleteDate = produceCompleteDate,
+                Timings = timings,
                 Id = id
             };
             _data.BuiltHouses.Add(houseData);
@@ -44,13 +43,22 @@ namespace Game.Player
             return id;
         }
 
-        public void UpgradeBuilding(int id, int level, DateTime produceCompleteDate)
+        public void CollectHouseIncome(int houseId, DateTime collectDate)
         {
-            DebugOnly.Check(_data.BuiltHouses.Count > id, $"House with id {id},not presented in built houses");
-            var house = _data.BuiltHouses[id];
+            DebugOnly.Check(_data.BuiltHouses.Count > houseId, $"House with id {houseId},not presented in built houses");
+            var house = _data.BuiltHouses[houseId];
+            house.Timings.CollectDate = collectDate;
+            _data.BuiltHouses[houseId] = house;
+            _saveManager.SavePlayer(_data);
+        }
+
+        public void UpgradeBuilding(int houseId, int level, DateTime produceCompleteDate)
+        {
+            DebugOnly.Check(_data.BuiltHouses.Count > houseId, $"House with id {houseId},not presented in built houses");
+            var house = _data.BuiltHouses[houseId];
             house.HouseLevel = level;
-            house.ProduceCompleteDate = produceCompleteDate;
-            _data.BuiltHouses[id] = house;
+            house.Timings.ProduceCompleteDate = produceCompleteDate;
+            _data.BuiltHouses[houseId] = house;
             _saveManager.SavePlayer(_data);
         }
 
@@ -76,6 +84,11 @@ namespace Game.Player
             var currentWallet = _data.PlayerWallet.FirstOrDefault(x => x.Currency == type);
             DebugOnly.Check(currentWallet != null, $"Player dont have wallet for {type}");
             return currentWallet.Value;
+        }
+
+        public List<BuiltHouseData> GetBuiltHousesData()
+        {
+            return _data.BuiltHouses;
         }
     }
 }

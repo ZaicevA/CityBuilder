@@ -1,7 +1,6 @@
 using Foundation;
-using Game.Builder;
 
-namespace Game.UI
+namespace Game.Builder
 {
     public class UIHouseBuilder : AbstractService<IHouseBuilder>, IHouseBuilder
     {

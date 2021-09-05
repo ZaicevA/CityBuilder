@@ -10,6 +10,7 @@ namespace Game.Data
         public HouseLevel[] Levels;
         public string HouseName;
         public Currency ProducedCurrency;
+        public BuildingType BuildingType;
     }
 
     [Serializable]
@@ -18,8 +19,9 @@ namespace Game.Data
         public CurrencyAmount UpgradePrice;
         public int StorageCapacity;
         public int IncomePerSecond;
-        public DateTime ProduceTime => new DateTime(0,0,ProduceTimeDays,ProduceTimeHours,
-            ProduceTimeMinutes,ProduceTimeSeconds);
+
+        public TimeSpan ProduceTime =>
+            new TimeSpan(ProduceTimeDays, ProduceTimeHours, ProduceTimeMinutes, ProduceTimeSeconds);
 
         [SerializeField]
         private int ProduceTimeSeconds;
@@ -29,6 +31,11 @@ namespace Game.Data
         private int ProduceTimeHours;
         [SerializeField]
         private int ProduceTimeDays;
+    }
+
+    public enum BuildingType
+    {
+        MoneyBuilding = 0,
     }
 }
 

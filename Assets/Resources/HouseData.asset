@@ -12,4 +12,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 844d5b2b0a6157841aae76ea129d0ac4, type: 3}
   m_Name: HouseData
   m_EditorClassIdentifier: 
-  Levels: []
+  Levels:
+  - UpgradePrice:
+      Currency: 0
+      Value: 100
+    StorageCapacity: 200
+    IncomePerSecond: 5
+    ProduceTimeSeconds: 0
+    ProduceTimeMinutes: 0
+    ProduceTimeHours: 0
+    ProduceTimeDays: 0
+  - UpgradePrice:
+      Currency: 0
+      Value: 1000
+    StorageCapacity: 2000
+    IncomePerSecond: 20
+    ProduceTimeSeconds: 0
+    ProduceTimeMinutes: 0
+    ProduceTimeHours: 0
+    ProduceTimeDays: 0
+  - UpgradePrice:
+      Currency: 0
+      Value: 4000
+    StorageCapacity: 10000
+    IncomePerSecond: 100
+    ProduceTimeSeconds: 10
+    ProduceTimeMinutes: 0
+    ProduceTimeHours: 0
+    ProduceTimeDays: 0
+  HouseName: MoneyHouse
+  ProducedCurrency: 0
+  BuildingType: 0
