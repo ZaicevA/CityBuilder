@@ -1,12 +1,17 @@
 using Foundation;
+using Game.Houses;
+using Game.UI;
+using UnityEngine;
 
 namespace Game.Builder
 {
     public class UIHouseBuilder : AbstractService<IHouseBuilder>, IHouseBuilder
     {
-        public void Build()
+        [SerializeField] private HousesMenu _menu;
+        
+        public void Build(House house)
         {
-            throw new System.NotImplementedException();
+            _menu.AddHouse(house);
         }
     }
 }

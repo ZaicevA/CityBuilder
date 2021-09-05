@@ -1,6 +1,6 @@
 using Game.Data;
 
-namespace Game.House
+namespace Game.Houses
 {
     public interface IHousesManager
     {

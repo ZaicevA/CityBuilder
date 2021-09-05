@@ -2,27 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Foundation;
+using Game.Builder;
 using Game.Data;
 using Game.Economics;
 using Game.Economics.Utility;
 using Game.Player;
 using Zenject;
 
-namespace Game.House
+namespace Game.Houses
 {
     public class SimpleHousesManager : AbstractService<IHousesManager>, IHousesManager
     {
         [Inject] private IPlayerManager _playerManager;
         [Inject] private IEconomicsManager _economicsManager;
+        [Inject] private IHouseBuilder _houseBuilder;
         
         private HouseData[] _housesData;
         private Dictionary<int, House> _builtHouses;
-        private HousesFabric _fabric;
+        private HousesFactory _factory;
 
         private void Awake()
         {
             _builtHouses = new Dictionary<int, House>();
-            _fabric = new HousesFabric();
+            _factory = new HousesFactory(_houseBuilder);
         }
 
         public void SetHousesData(HouseData[] data)
@@ -99,6 +101,11 @@ namespace Game.House
 
         public void UpgradeHouse(int houseId)
         {
+            if(!IsUpgradeAvailable(houseId))
+            {
+                return;
+            }
+            
             var house = _builtHouses[houseId];
             var data = GetHouseData(house.Type);
             var newLevelId = house.LevelId + 1;
@@ -110,7 +117,7 @@ namespace Game.House
 
         private void ConstructHouse(int id, HouseData data, Timings timings, int levelId)
         {
-            _builtHouses.Add(id, _fabric.BuildHouse(id, data, timings, levelId));
+            _builtHouses.Add(id, _factory.BuildHouse(id, data, timings, levelId));
         }
 
         private HouseData GetHouseData(BuildingType type)

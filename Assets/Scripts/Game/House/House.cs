@@ -1,7 +1,9 @@
 using System;
+using Foundation;
 using Game.Data;
+using Game.Economics.Utility;
 
-namespace Game.House
+namespace Game.Houses
 {
     public class House
     {
@@ -14,7 +16,7 @@ namespace Game.House
         
         private HouseData _data;
 
-        public void Init(int id, HouseData data, Timings timings, int levelId)
+        public House(int id, HouseData data, Timings timings, int levelId)
         {
             ID = id;
             ProduceCompleteDate = timings.ProduceCompleteDate;
@@ -51,7 +53,19 @@ namespace Game.House
             return result >= level.StorageCapacity ? level.StorageCapacity : result;
         }
 
-        private bool InProduction(DateTime when)
+        public CurrencyAmount GetUpgradePrice()
+        {
+            if (LevelId + 1 < _data.Levels.Length)
+            {
+                return _data.Levels[LevelId + 1].UpgradePrice;
+            }
+            
+            DebugOnly.Message($"House {ID} fully upgraded");
+            return new CurrencyAmount();
+
+        }
+
+        public bool InProduction(DateTime when)
         {
             return when < ProduceCompleteDate;
         }

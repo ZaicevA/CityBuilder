@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Foundation;
 using Game.Data;
 using Game.Economics.Utility;
 
@@ -7,6 +8,7 @@ namespace Game.Player
 {
     public interface IPlayerManager
     {
+        public ObserverList<IOnCurrencyChange> OnCurrencyChange { get; }
         void SetPlayer(PlayerData data);
         int AddNewBuilding(Timings timings, int level, HouseData data);
         

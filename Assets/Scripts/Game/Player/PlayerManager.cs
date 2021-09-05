@@ -11,6 +11,8 @@ namespace Game.Player
 {
     public class PlayerManager : AbstractService<IPlayerManager>, IPlayerManager
     {
+        public ObserverList<IOnCurrencyChange> OnCurrencyChange { get; } = new ObserverList<IOnCurrencyChange>();
+        
         [Inject] private ISaveManager _saveManager;
         
         private PlayerData _data;
@@ -74,6 +76,11 @@ namespace Game.Player
                 {
                     _data.PlayerWallet[i] = currentWallet;
                 }
+            }
+            
+            foreach (var observer in OnCurrencyChange.Enumerate())
+            {
+                observer.Do();
             }
             
             _saveManager.SavePlayer(_data);
