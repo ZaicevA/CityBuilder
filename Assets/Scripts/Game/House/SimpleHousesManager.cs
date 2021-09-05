@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Foundation;
@@ -7,6 +8,7 @@ using Game.Data;
 using Game.Economics;
 using Game.Economics.Utility;
 using Game.Player;
+using UnityEngine;
 using Zenject;
 
 namespace Game.Houses
@@ -20,12 +22,8 @@ namespace Game.Houses
         private HouseData[] _housesData;
         private Dictionary<int, House> _builtHouses;
         private HousesFactory _factory;
-
-        private void Awake()
-        {
-            _builtHouses = new Dictionary<int, House>();
-            _factory = new HousesFactory(_houseBuilder);
-        }
+        private bool _initialized;
+        private readonly WaitForSeconds _tick = new WaitForSeconds(1f); 
 
         public void SetHousesData(HouseData[] data)
         {
@@ -39,7 +37,20 @@ namespace Game.Houses
             var builtHouses = _playerManager.GetBuiltHousesData();
             foreach (var house in builtHouses)
             {
-                ConstructHouse(house.Id, house.Data, house.Timings, house.HouseLevel - 1);
+                ConstructHouse(house.Id, GetHouseData(house.Type), house.ProduceCompleteDate, house.HouseLevel - 1,
+                    house.StoredResource);
+            }
+
+            if (_builtHouses == null)
+            {
+                return;
+            }
+            
+            var lastSeen = _playerManager.GetLastSeenTime();
+            
+            foreach (var house in _builtHouses)
+            {
+                house.Value.TickForAbsentTime(lastSeen);    
             }
         }
 
@@ -56,27 +67,20 @@ namespace Game.Houses
             var totalAmount = new CurrencyAmount()
             {
                 Currency = data.ProducedCurrency,
-                Value = house.GetStoredValue(collectDate)
+                Value = house.StoredResource
             };
             
             house.Collect(collectDate);
             _economicsManager.Earn(totalAmount);
-            _playerManager.CollectHouseIncome(houseId, collectDate);
         }
 
         public void BuildHouse(BuildingType type, int levelId = 0)
         {
             var data = GetHouseData(type);
             var produceTime = DateTime.Now + data.Levels[levelId].ProduceTime;
-            var timings = new Timings()
-            {
-                BuiltDate = DateTime.Now,
-                //Finish of building constructing is the moment when we start accumulating resource
-                CollectDate = produceTime,
-                ProduceCompleteDate = produceTime,
-            };
-            var id = _playerManager.AddNewBuilding(timings, levelId + 1, data);
-            ConstructHouse(id,data,timings,levelId);
+            var date = new DateAndTime(produceTime);
+            var id = _playerManager.AddNewBuilding(date, levelId + 1, data);
+            ConstructHouse(id,data,date,levelId , 0);
         }
 
         public bool IsUpgradeAvailable(int houseId)
@@ -92,7 +96,7 @@ namespace Game.Houses
 
             if (data.Levels.Length > house.LevelId + 1)
             {
-                return _economicsManager.CanAfford(data.Levels[house.LevelId + 1].UpgradePrice);
+                return true;
             }
             
             DebugOnly.Message($"House {houseId} on maximum level");
@@ -114,10 +118,51 @@ namespace Game.Houses
             _playerManager.UpgradeBuilding(houseId, newLevelId + 1, produceCompleteDate);
             house.Upgrade(produceCompleteDate);
         }
-
-        private void ConstructHouse(int id, HouseData data, Timings timings, int levelId)
+        
+        private void Awake()
         {
-            _builtHouses.Add(id, _factory.BuildHouse(id, data, timings, levelId));
+            if (!_initialized)
+            {
+                Init();
+            }
+        }
+        
+        private void OnDestroy()
+        {
+            StopAllCoroutines();
+            var storedResourceDict = _builtHouses.ToDictionary(house => house.Key, 
+                house => house.Value.StoredResource);
+            _playerManager.UpdateHouseStoredResource(storedResourceDict);
+        }
+
+        private void Init()
+        {
+            _builtHouses = new Dictionary<int, House>();
+            _factory = new HousesFactory(_houseBuilder);
+            StartCoroutine(HouseTicks());
+            _initialized = true;
+        }
+
+        private IEnumerator HouseTicks()
+        {
+            while (true)
+            {
+                yield return _tick;
+                foreach (var house in _builtHouses)
+                {
+                    house.Value.Tick();
+                }
+            }
+        }
+
+        private void ConstructHouse(int id, HouseData data, DateAndTime produceCompleteDate, int levelId, int storedIncome)
+        {
+            if (!_initialized)
+            {
+                Init();
+            }
+            
+            _builtHouses.Add(id, _factory.BuildHouse(id, data, produceCompleteDate, levelId, storedIncome));
         }
 
         private HouseData GetHouseData(BuildingType type)

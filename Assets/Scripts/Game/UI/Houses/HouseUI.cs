@@ -29,15 +29,15 @@ namespace Game.UI
 
         public void Upgrade()
         {
-            _housesManager.UpgradeHouse(_house.ID);
+            if (_economicsManager.Buy(_house.GetUpgradePrice()))
+            {
+                _housesManager.UpgradeHouse(_house.ID);
+            }
         }
 
         public void Collect()
         {
-            if(_economicsManager.Buy(_house.GetUpgradePrice()))
-            {
-                _housesManager.CollectHouseIncome(_house.ID);
-            }
+            _housesManager.CollectHouseIncome(_house.ID);
         }
 
         private IEnumerator UpdateRoutine()
@@ -47,7 +47,7 @@ namespace Game.UI
                 _upgradeCostText.gameObject.SetActive(_housesManager.IsUpgradeAvailable(_house.ID));
                 var price = _house.GetUpgradePrice();
                 _upgradeCostText.text = $"{price.Currency} {price.Value}";
-                _incomeText.text = _house.GetStoredValue(DateTime.Now).ToString();
+                _incomeText.text = _house.StoredResource.ToString();
                 _produceTimer.gameObject.SetActive(_house.InProduction(DateTime.Now));
                 _produceTimer.text = (_house.ProduceCompleteDate - DateTime.Now).ToString();
                 yield return _delay;

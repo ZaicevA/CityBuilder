@@ -14,4 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerWallet:
   - Currency: 0
-    Value: 100
+    Value: 10000
+  BuiltHouses: []
+  LastSeen:
+    Second: 0
+    Minute: 0
+    Hour: 0
+    Day: 0
+    Month: 0
+    Year: 0

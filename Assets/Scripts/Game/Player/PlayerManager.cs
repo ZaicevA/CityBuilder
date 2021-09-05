@@ -23,21 +23,38 @@ namespace Game.Player
             
             if(_data.BuiltHouses != null)
             {
-                DebugOnly.Message($"Built house data is null");
                 return;
             }
 
+            DebugOnly.Message($"Built house data is null");
             _data.BuiltHouses = new List<BuiltHouseData>();
         }
 
-        public int AddNewBuilding(Timings timings, int level, HouseData data)
+        public DateTime GetLastSeenTime()
+        {
+            if (_data.LastSeen.Year == 0)
+            {
+                return DateTime.Now;
+            }
+
+            return _data.LastSeen.Get();
+        }
+
+        private void OnDestroy()
+        {
+            _data.LastSeen.Set(DateTime.Now);
+            _saveManager.SavePlayer(_data);
+        }
+
+        public int AddNewBuilding(DateAndTime produceCompleteDate, int level, HouseData data)
         {
             var id = _data.BuiltHouses.Count;
             var houseData = new BuiltHouseData()
             {
-                Data = data,
+                Type = data.BuildingType,
                 HouseLevel = level,
-                Timings = timings,
+                StoredResource = 0,
+                ProduceCompleteDate = produceCompleteDate,
                 Id = id
             };
             _data.BuiltHouses.Add(houseData);
@@ -45,23 +62,23 @@ namespace Game.Player
             return id;
         }
 
-        public void CollectHouseIncome(int houseId, DateTime collectDate)
-        {
-            DebugOnly.Check(_data.BuiltHouses.Count > houseId, $"House with id {houseId},not presented in built houses");
-            var house = _data.BuiltHouses[houseId];
-            house.Timings.CollectDate = collectDate;
-            _data.BuiltHouses[houseId] = house;
-            _saveManager.SavePlayer(_data);
-        }
-
         public void UpgradeBuilding(int houseId, int level, DateTime produceCompleteDate)
         {
             DebugOnly.Check(_data.BuiltHouses.Count > houseId, $"House with id {houseId},not presented in built houses");
             var house = _data.BuiltHouses[houseId];
             house.HouseLevel = level;
-            house.Timings.ProduceCompleteDate = produceCompleteDate;
+            house.ProduceCompleteDate.Set(produceCompleteDate);
             _data.BuiltHouses[houseId] = house;
-            _saveManager.SavePlayer(_data);
+        }
+
+        public void UpdateHouseStoredResource(Dictionary<int,int> resources)
+        {
+            foreach (var resource in resources)
+            {
+                var house = _data.BuiltHouses[resource.Key];
+                house.StoredResource = resource.Value;
+                _data.BuiltHouses[resource.Key] = house;
+            }
         }
 
         public void AddCurrency(CurrencyAmount amount)
@@ -82,8 +99,6 @@ namespace Game.Player
             {
                 observer.Do();
             }
-            
-            _saveManager.SavePlayer(_data);
         }
 
         public int GetCurrencyValue(Currency type)

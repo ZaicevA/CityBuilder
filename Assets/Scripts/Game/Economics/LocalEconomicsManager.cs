@@ -19,8 +19,11 @@ namespace Game.Economics
             if (!CanAfford(price)) 
                 return false;
             
-            price.Value = -price.Value;
-            _playerManager.AddCurrency(price);
+            _playerManager.AddCurrency(new CurrencyAmount()
+            {
+                Currency = price.Currency,
+                Value = - price.Value
+            });
             return true;
         }
 

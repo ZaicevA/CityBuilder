@@ -10,15 +10,10 @@ namespace Game.Player
     {
         public ObserverList<IOnCurrencyChange> OnCurrencyChange { get; }
         void SetPlayer(PlayerData data);
-        int AddNewBuilding(Timings timings, int level, HouseData data);
-        
-        /// <summary>
-        /// Update ONLY information about when player collects income from house
-        /// </summary>
-        /// <param name="houseId"></param>
-        /// <param name="collectDate"></param>
-        void CollectHouseIncome(int houseId, DateTime collectDate);
+        DateTime GetLastSeenTime();
+        int AddNewBuilding(DateAndTime produceCompleteDate, int level, HouseData data);
         void UpgradeBuilding(int houseId, int level, DateTime produceCompleteDate);
+        void UpdateHouseStoredResource(Dictionary<int,int> resources);
         void AddCurrency(CurrencyAmount amount);
         int GetCurrencyValue(Currency type);
         List<BuiltHouseData> GetBuiltHousesData();

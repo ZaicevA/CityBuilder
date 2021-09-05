@@ -5,13 +5,12 @@ using UnityEngine;
 
 namespace Game.SaveSystem
 {
-    public class EditorSaveManager : AbstractService<ISaveManager>, ISaveManager
+    public class PrefsSaveManager : AbstractService<ISaveManager>, ISaveManager
     {
         public void SavePlayer(PlayerData data)
         {
-            var playerData = Resources.Load<PlayerData>("PlayerData");
-            playerData = data;
-            EditorUtility.SetDirty(playerData);
+            var jsonString = JsonUtility.ToJson(data);
+            PlayerPrefs.SetString("PlayerProfile", jsonString);
             DebugOnly.Message($"Player saved");
         }
     }    

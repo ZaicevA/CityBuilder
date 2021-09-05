@@ -20,19 +20,15 @@ namespace Game.UI
 
         private HouseData _data;
 
-        private void Awake()
+        private void Start()
         {
             _data = _housesManager.GetHousesData()[0];
-        }
-
-        private void OnEnable()
-        {
             //Use localization here
             _buildingName.text = _data.HouseName;
             var price = _data.Levels[0].UpgradePrice;
             _textPrice.text = $"{price.Currency} {price.Value}";
         }
-        
+
         public void Build()
         {
             var price = _data.Levels[0].UpgradePrice;

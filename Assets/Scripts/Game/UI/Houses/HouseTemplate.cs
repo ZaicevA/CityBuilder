@@ -14,6 +14,7 @@ namespace Game.UI
         {
             _house = house;
             _houseUI = ui;
+            _nameText.text = $"House {house.ID}";
         }
 
         public void OnClick()

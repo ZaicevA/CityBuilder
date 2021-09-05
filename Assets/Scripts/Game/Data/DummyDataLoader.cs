@@ -14,7 +14,16 @@ namespace Game.Data
 
         public PlayerData LoadPlayerData()
         {
-            return Resources.Load<PlayerData>("PlayerData");
+            //JSON deserialization don't work dunno why :(
+            PlayerPrefs.DeleteAll();
+            DebugOnly.Message(PlayerPrefs.GetString("PlayerProfile"));
+            var data = JsonUtility.FromJson<PlayerData>(PlayerPrefs.GetString("PlayerProfile"));
+            if (PlayerPrefs.GetString("PlayerProfile") == "")
+            {
+                data =Resources.Load<PlayerData>("PlayerData");
+            }
+            
+            return data;
         }
     }
 }

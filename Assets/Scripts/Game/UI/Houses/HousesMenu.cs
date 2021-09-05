@@ -12,7 +12,8 @@ namespace Game.UI
         public void AddHouse(House house)
         {
             var go = Instantiate(_template, _layoutGroup);
-            _template.GetComponent<HouseTemplate>().Init(house, _houseUI);
+            go.GetComponent<HouseTemplate>().Init(house, _houseUI);
+            go.SetActive(true);
         }
     }
 }

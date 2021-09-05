@@ -13,9 +13,9 @@ namespace Game.Houses
             _houseBuilder = builder;
         }
         
-        public House BuildHouse(int id, HouseData data, Timings timings, int levelId)
+        public House BuildHouse(int id, HouseData data, DateAndTime produceCompleteDate, int levelId, int storedValue)
         {
-            var result = new House(id, data, timings, levelId);
+            var result = new House(id, data, produceCompleteDate, levelId, storedValue);
             _houseBuilder.Build(result);
             return result;
         }
